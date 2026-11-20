@@ -37,4 +37,26 @@ class ApiApplicationTests {
 		.andExpect(jsonPath("$status").value("Operando"));
 	}
 
+	// Cadastrar maquina
+	@Test
+	void testeCadastrarMaquina() throws Exception{
+		String machine = """
+		{
+			"name": "Machine 3",
+			"type": "Extrusora",
+			"sector": "Produção",
+			"status": "Operando",
+		}
+		""";
+
+		mockMvc.perform(post("machines/register")
+		.contentType("application/sjon")
+		.content(machine))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.name").value("Machine 3"))
+		.andExpect(jsonPath("$.type").value("Extrusora"))
+		.andExpect(jsonPath("$.sector").value("Produção"))
+		.andExpect(jsonPath("$.status").value("Operando"));
+	}
+
 }
