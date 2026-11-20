@@ -56,7 +56,7 @@ class ApiApplicationTests {
 		.andExpect(jsonPath("$.name").value("Machine 3"))
 		.andExpect(jsonPath("$.type").value("Extrusora"))
 		.andExpect(jsonPath("$.sector").value("Produção"))
-		.andExpect(jsonPath("$.status").value("Operando"));
+		.andExpect(jsonPath("$.status").value("Operando")); 
 	}
 
 }
