@@ -59,4 +59,27 @@ class ApiApplicationTests {
 		.andExpect(jsonPath("$.status").value("Operando")); 
 	}
 
+	// Atualizar maquina
+	@Test
+	void testeAtualizarMaquina() throws Exception{
+		String livroAtualizado = """
+			{
+				"name": "Machine 2 atualizado",
+				"type": "Extrusora aA",
+				"sector": "Produção teste",
+				"status": "Operando",
+			}
+			""";
+
+			mockMvc.perform(put("machines/89bc351b-e3b5-4e74-8dfd-2bf1db747584")
+			.contentType("application/sjon")
+			.content(livroAtualizado))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(2))
+			.andExpect(jsonPath("$.name").value("Machine 2 atualizado"))
+			.andExpect(jsonPath("$.type").value("Extrusora aA"))
+			.andExpect(jsonPath("$.sector").value("Produção teste"))
+			.andExpect(jsonPath("$.status").value("Operando")); 
+	}
+
 }
