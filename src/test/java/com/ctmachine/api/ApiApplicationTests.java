@@ -82,4 +82,11 @@ class ApiApplicationTests {
 			.andExpect(jsonPath("$.status").value("Operando")); 
 	}
 
+	// Verificar inexistência
+	@Test
+	void testarMaquinaInexistent()throws Exception{
+		mockMvc.perform(get("/machines/89bc351b-e3b5-4e74-8dfd-2bf1db747584"))
+		.andExpect(status().isNotFound());
+	}
+
 }
