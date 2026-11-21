@@ -49,14 +49,34 @@ class ApiApplicationTests {
 		}
 		""";
 
-		mockMvc.perform(post("machines/register")
-		.contentType("application/sjon")
+		mockMvc.perform(post("/machines/register")
+		.contentType("application/json")
 		.content(machine))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name").value("Machine 3"))
 		.andExpect(jsonPath("$.type").value("Extrusora"))
 		.andExpect(jsonPath("$.sector").value("Produção"))
 		.andExpect(jsonPath("$.status").value("Operando")); 
+	}
+
+	// Cadastrar producao
+	@Test
+	void testeCadastrarProducao() throws Exception{
+		String production = """
+		{
+			"consumption": "12.5",
+			"workingTime": "08:00",
+			"totalProduction": "500",
+		}
+		""";
+
+		mockMvc.perform(post("/production/register")
+		.contentType("application/json")
+		.content(production))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.consumption").value("12.5"))
+		.andExpect(jsonPath("$.workingTime").value("08:00"))
+		.andExpect(jsonPath("$.totalProduction").value("500"));
 	}
 
 	// Atualizar maquina
@@ -71,8 +91,8 @@ class ApiApplicationTests {
 			}
 			""";
 
-			mockMvc.perform(put("machines/89bc351b-e3b5-4e74-8dfd-2bf1db747584")
-			.contentType("application/sjon")
+			mockMvc.perform(put("/machines/89bc351b-e3b5-4e74-8dfd-2bf1db747584")
+			.contentType("application/json")
 			.content(livroAtualizado))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").value(2))
