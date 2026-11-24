@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ctmachine.api.models.Machine;
+import com.ctmachine.api.models.StatusEnum;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,23 @@ public class MachineController {
 
     // Create a list to simulate a Data Base
     private List<Machine> machines = new ArrayList<>();
+
+    public MachineController() {
+        machines.add(new Machine(
+                UUID.fromString("a32cb2b4-e8f9-4715-98a7-da9606de49cb"),
+                "Máquina 1",
+                "CNC",
+                "Produção",
+                StatusEnum.Operando
+        ));
+        machines.add(new Machine(
+                UUID.fromString("89bc351b-e3b5-4e74-8dfd-2bf1db747584"),
+                "Máquina 2",
+                "Extrusora",
+                "Produção",
+                StatusEnum.Parada
+        ));
+    }
 
     // Initial message
     @GetMapping("/")
@@ -48,13 +67,13 @@ public class MachineController {
 
     // Search by id
     @GetMapping("/{id}")
-    public Machine searchById(@PathVariable UUID id){
+    public ResponseEntity<Machine> searchById(@PathVariable UUID id){
         for (Machine machine : machines){
             if(id.equals(machine.getId())){
-                return machine;
+                return ResponseEntity.ok(machine);
             }
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
     // Post machine
@@ -68,7 +87,7 @@ public class MachineController {
 
     // Put machine / update
     @PutMapping("/{id}")
-    public Machine updatMachine(@PathVariable UUID id, @RequestBody Machine updatedMachine){
+    public ResponseEntity<Machine> updatMachine(@PathVariable UUID id, @RequestBody Machine updatedMachine){
         for (Machine machine : machines){
             if (id.equals(machine.getId())){
                 machine.setName(updatedMachine.getName());
@@ -76,10 +95,10 @@ public class MachineController {
                 machine.setSector(updatedMachine.getSector());
                 machine.setStatus(updatedMachine.getStatus());
 
-                return machine;
+                return ResponseEntity.ok(machine);
             }
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
     // Delete machine
