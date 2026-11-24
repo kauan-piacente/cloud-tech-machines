@@ -3,13 +3,16 @@ package com.ctmachine.api;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.ctmachine.api.controllers.MachineController;
 import com.ctmachine.api.controllers.ProductionController;
 
-@WebMvcTest(ProductionController.class)
+@WebMvcTest({MachineController.class, ProductionController.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ApiApplicationTests {
 
 	@Autowired
@@ -22,19 +25,19 @@ class ApiApplicationTests {
 		.andExpect(status().isOk())	
 		.andExpect(jsonPath("$.length()").value(2))
 		.andExpect(jsonPath("$[0].name").value("Máquina 1"))
-		.andExpect(jsonPath("$[0].name").value("Máquina 2"));
+		.andExpect(jsonPath("$[1].name").value("Máquina 2"));
 	}
 
-	// Listar livro por ID
+	// Listar maquina por ID
 	@Test
 	void testarListarMaquinaPorId() throws Exception{
 		mockMvc.perform(get("/machines/a32cb2b4-e8f9-4715-98a7-da9606de49cb"))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.id").value("a32cb2b4-e8f9-4715-98a7-da9606de49cb"))
-		.andExpect(jsonPath("$name").value("Máquina 1"))
-		.andExpect(jsonPath("$type").value("CNC"))
-		.andExpect(jsonPath("$sector").value("Produção"))
-		.andExpect(jsonPath("$status").value("Operando"));
+		.andExpect(jsonPath("$.name").value("Máquina 1"))
+		.andExpect(jsonPath("$.type").value("CNC"))
+		.andExpect(jsonPath("$.sector").value("Produção"))
+		.andExpect(jsonPath("$.status").value("Operando"));
 	}
 
 	// Cadastrar maquina
@@ -45,7 +48,7 @@ class ApiApplicationTests {
 			"name": "Machine 3",
 			"type": "Extrusora",
 			"sector": "Produção",
-			"status": "Operando",
+			"status": "Operando"
 		}
 		""";
 
@@ -64,9 +67,9 @@ class ApiApplicationTests {
 	void testeCadastrarProducao() throws Exception{
 		String production = """
 		{
-			"consumption": "12.5",
+			"consumption": 12.5,
 			"workingTime": "08:00",
-			"totalProduction": "500",
+			"totalProduction": 500
 		}
 		""";
 
@@ -74,28 +77,28 @@ class ApiApplicationTests {
 		.contentType("application/json")
 		.content(production))
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.consumption").value("12.5"))
+		.andExpect(jsonPath("$.consumption").value(12.5))
 		.andExpect(jsonPath("$.workingTime").value("08:00"))
-		.andExpect(jsonPath("$.totalProduction").value("500"));
+		.andExpect(jsonPath("$.totalProduction").value(500));
 	}
 
 	// Atualizar maquina
 	@Test
 	void testeAtualizarMaquina() throws Exception{
-		String livroAtualizado = """
+		String maquinaAtualizada = """
 			{
 				"name": "Machine 2 atualizado",
 				"type": "Extrusora aA",
 				"sector": "Produção teste",
-				"status": "Operando",
+				"status": "Operando"
 			}
 			""";
 
 			mockMvc.perform(put("/machines/89bc351b-e3b5-4e74-8dfd-2bf1db747584")
 			.contentType("application/json")
-			.content(livroAtualizado))
+			.content(maquinaAtualizada))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(2))
+			.andExpect(jsonPath("$.id").value("89bc351b-e3b5-4e74-8dfd-2bf1db747584"))
 			.andExpect(jsonPath("$.name").value("Machine 2 atualizado"))
 			.andExpect(jsonPath("$.type").value("Extrusora aA"))
 			.andExpect(jsonPath("$.sector").value("Produção teste"))
@@ -104,8 +107,8 @@ class ApiApplicationTests {
 
 	// Verificar inexistência
 	@Test
-	void testarMaquinaInexistent()throws Exception{
-		mockMvc.perform(get("/machines/89bc351b-e3b5-4e74-8dfd-2bf1db747584"))
+	void testarMaquinaInexistent() throws Exception{
+		mockMvc.perform(get("/machines/00000000-0000-0000-0000-000000000000"))
 		.andExpect(status().isNotFound());
 	}
 
